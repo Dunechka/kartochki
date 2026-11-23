@@ -46,6 +46,9 @@ select { font: inherit; min-height: 48px; min-width: 44px; width: 100%; max-widt
 #category-list h3 { margin: 0 0 8px; font-size: 16px; }
 .category-stats { margin: 0 0 12px; overflow-wrap: anywhere; }
 .goal-hint { margin: 6px 0 0; font-size: 13px; color: #586b63; }
+.category-message { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; }
+.goal-shortage { background: #fff3dc; color: #78500f; }
+.goal-reached { background: #edf3eb; color: #244e3d; }
 .goal-form { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .goal-form > button { margin-top: 24px; }
 @media (max-width: 420px) { .goal-form { grid-template-columns: minmax(0, 1fr); } .goal-form > button { margin-top: 0; } }

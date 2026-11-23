@@ -133,6 +133,14 @@ function render() {
     field.append(label, input, hint, error);
     goalForm.append(field, button);
     item.append(heading, stats, goalForm);
+    if (category.goal && (categoryCards.length < category.goal || known >= category.goal)) {
+      const message = document.createElement('p');
+      const reached = known >= category.goal;
+      message.className = reached ? 'category-message goal-reached' : 'category-message goal-shortage';
+      message.setAttribute('role', 'status');
+      message.textContent = reached ? 'Цель достигнута' : `Добавьте ещё ${category.goal - categoryCards.length}`;
+      item.append(message);
+    }
     categoryList.append(item);
   }
   flashcard.disabled = knownButton.disabled = unknownButton.disabled = !active;
