@@ -13,7 +13,7 @@ const categoryForm = document.getElementById('category-form');
 const categoryName = document.getElementById('category-name');
 const newCategory = document.getElementById('new-category');
 const activeCategory = document.getElementById('active-category');
-const defaultCategory = { id: 'uncategorized', name: 'Без категории' };
+const defaultCategory = { id: 'uncategorized', name: 'Без категории', goal: null };
 let categories = [defaultCategory];
 let cards = [];
 let activeId = null;
@@ -27,11 +27,15 @@ try {
   const categoryNames = new Set([defaultCategory.name.toLocaleLowerCase('ru')]);
   if (Array.isArray(saved.categories)) {
     for (const category of saved.categories) {
+      if (category?.id === defaultCategory.id) {
+        defaultCategory.goal = Number.isSafeInteger(category.goal) && category.goal > 0 ? category.goal : null;
+        continue;
+      }
       if (!category || typeof category.id !== 'string' || !category.id || categoryIds.has(category.id) ||
           typeof category.name !== 'string' || !category.name.trim()) continue;
       const name = category.name.trim();
       if (categoryNames.has(name.toLocaleLowerCase('ru'))) continue;
-      categories.push({ id: category.id, name });
+      categories.push({ id: category.id, name, goal: Number.isSafeInteger(category.goal) && category.goal > 0 ? category.goal : null });
       categoryIds.add(category.id);
       categoryNames.add(name.toLocaleLowerCase('ru'));
     }
@@ -78,7 +82,57 @@ function render() {
   categoryList.replaceChildren();
   for (const category of categories) {
     const item = document.createElement('li');
-    item.textContent = category.name;
+    const heading = document.createElement('h3');
+    heading.textContent = category.name;
+    const categoryCards = cards.filter(card => card.categoryId === category.id);
+    const known = categoryCards.filter(card => card.known).length;
+    const stats = document.createElement('p');
+    stats.className = 'category-stats';
+    stats.setAttribute('role', 'status');
+    stats.textContent = `Добавлено: ${categoryCards.length} · Знаю: ${known} · ` +
+      (category.goal ? `Цель: ${category.goal} · До цели: ${Math.max(category.goal - known, 0)}` : 'Цель не задана');
+    const goalForm = document.createElement('form');
+    goalForm.className = 'goal-form';
+    goalForm.noValidate = true;
+    const field = document.createElement('div');
+    const label = document.createElement('label');
+    label.htmlFor = `goal-${category.id}`;
+    label.textContent = 'Цель слов';
+    const input = document.createElement('input');
+    input.id = label.htmlFor;
+    input.type = 'text';
+    input.inputMode = 'numeric';
+    input.value = category.goal ? String(category.goal) : '';
+    const hint = document.createElement('p');
+    hint.id = `goal-hint-${category.id}`;
+    hint.className = 'goal-hint';
+    hint.textContent = 'Пустое поле — без цели.';
+    const error = document.createElement('p');
+    error.id = `goal-error-${category.id}`;
+    error.className = 'error';
+    error.setAttribute('aria-live', 'polite');
+    input.setAttribute('aria-describedby', `${hint.id} ${error.id}`);
+    const button = document.createElement('button');
+    button.type = 'submit';
+    button.textContent = 'Сохранить цель';
+    goalForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const value = input.value.trim();
+      const goal = value === '' ? null : Number(value);
+      if (value !== '' && (!/^\d+$/.test(value) || !Number.isSafeInteger(goal) || goal <= 0)) {
+        error.textContent = 'Введите целое число больше нуля или очистите поле.';
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      category.goal = goal;
+      save();
+      render();
+      document.getElementById(`goal-${category.id}`).focus();
+    });
+    field.append(label, input, hint, error);
+    goalForm.append(field, button);
+    item.append(heading, stats, goalForm);
     categoryList.append(item);
   }
   flashcard.disabled = knownButton.disabled = unknownButton.disabled = !active;
@@ -147,7 +201,7 @@ categoryForm.addEventListener('submit', event => {
   categoryName.setAttribute('aria-invalid', String(Boolean(error)));
   document.getElementById('category-error').textContent = error;
   if (error) { categoryName.focus(); return; }
-  categories.push({ id: crypto.randomUUID(), name });
+  categories.push({ id: crypto.randomUUID(), name, goal: null });
   save();
   categoryForm.reset();
   render();
