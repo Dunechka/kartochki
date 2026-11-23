@@ -65,6 +65,10 @@ function save() {
 
 function render() {
   const active = cards.find(card => card.id === activeId);
+  const knownCount = cards.filter(card => card.known).length;
+  const percent = cards.length ? Math.round(knownCount / cards.length * 100) : 0;
+  document.getElementById('overall-count').textContent = `Знаю ${knownCount} из ${cards.length} · ${percent}%`;
+  document.getElementById('overall-progress').value = percent;
   const selectedCategory = newCategory.value;
   for (const select of [newCategory, activeCategory]) {
     select.replaceChildren();
@@ -150,7 +154,7 @@ function render() {
   document.getElementById('flip-hint').hidden = !active;
   knownButton.setAttribute('aria-pressed', String(Boolean(active?.known)));
   unknownButton.setAttribute('aria-pressed', String(Boolean(active && !active.known)));
-  document.getElementById('learned-count').textContent = `Выучено: ${cards.filter(card => card.known).length}`;
+  document.getElementById('learned-count').textContent = `Выучено: ${knownCount}`;
   document.getElementById('empty-list').hidden = cards.length > 0;
   list.replaceChildren();
   for (const card of cards) {

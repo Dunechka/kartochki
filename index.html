@@ -10,6 +10,11 @@
 <body>
   <main>
     <header><p class="eyebrow">ПОНЕМНОГУ КАЖДЫЙ ДЕНЬ</p><h1>Английский в карточках</h1><p>Добавляйте слова и проверяйте, что запомнили.</p></header>
+    <section class="panel overall-progress" aria-labelledby="progress-heading">
+      <h2 id="progress-heading">Общий прогресс</h2>
+      <p id="overall-count" role="status">Знаю 0 из 0 · 0%</p>
+      <progress id="overall-progress" max="100" value="0" aria-labelledby="progress-heading overall-count"></progress>
+    </section>
     <section class="panel categories" aria-labelledby="categories-heading">
       <h2 id="categories-heading">Категории</h2>
       <form id="category-form" novalidate>
