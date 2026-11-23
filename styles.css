@@ -38,4 +38,9 @@ li + li { border-top: 1px solid #e5ebe3; }
 .word-label { overflow-wrap: anywhere; min-width: 0; }
 .word-status { font-size: 12px; font-weight: 400; white-space: nowrap; color: #586b63; }
 footer { text-align: center; font-size: 12px; margin-top: 24px; }
+select { font: inherit; min-height: 48px; min-width: 44px; width: 100%; max-width: 100%; padding: 11px 13px; border: 1px solid #b6c7bc; border-radius: 10px; background: #fcfdfb; color: inherit; }
+.categories { margin-bottom: 20px; }
+#category-list { margin-top: 16px; }
+#category-list li { padding: 10px 0; overflow-wrap: anywhere; }
+.card-category { margin-top: 16px; }
 @media (max-width: 420px) { main { margin-top: 24px; } .panel { padding: 18px; } .section-heading { align-items: baseline; } .section-heading h2 { font-size: 17px; } }

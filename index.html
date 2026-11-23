@@ -10,11 +10,20 @@
 <body>
   <main>
     <header><p class="eyebrow">ПОНЕМНОГУ КАЖДЫЙ ДЕНЬ</p><h1>Английский в карточках</h1><p>Добавляйте слова и проверяйте, что запомнили.</p></header>
+    <section class="panel categories" aria-labelledby="categories-heading">
+      <h2 id="categories-heading">Категории</h2>
+      <form id="category-form" novalidate>
+        <div><label for="category-name">Название категории</label><input id="category-name" required aria-describedby="category-error"><p id="category-error" class="error" aria-live="polite"></p></div>
+        <button type="submit">Создать категорию</button>
+      </form>
+      <ul id="category-list" aria-label="Мои категории"></ul>
+    </section>
     <section class="panel" aria-labelledby="add-heading">
       <h2 id="add-heading">Новая карточка</h2>
       <form id="add-form" novalidate>
         <div><label for="word">Слово или фраза</label><input id="word" name="word" lang="en" required aria-describedby="word-error"><p class="error" id="word-error" aria-live="polite"></p></div>
         <div><label for="translation">Перевод</label><input id="translation" name="translation" required aria-describedby="translation-error"><p class="error" id="translation-error" aria-live="polite"></p></div>
+        <div><label for="new-category">Категория</label><select id="new-category"></select></div>
         <button class="primary" type="submit">Добавить</button>
       </form>
       <p id="storage-message" class="error" role="status"></p>
@@ -22,6 +31,7 @@
     <section class="practice" aria-labelledby="practice-heading">
       <div class="section-heading"><h2 id="practice-heading">Проверить себя</h2><p id="learned-count" role="status">Выучено: 0</p></div>
       <button id="flashcard" class="flashcard" type="button" disabled aria-describedby="flip-hint"><span id="card-side">Пока нет карточек</span><span id="card-text">Добавьте первое слово</span><span id="flip-hint">Нажмите, чтобы перевернуть</span></button>
+      <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
       <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
     </section>
     <section class="panel" aria-labelledby="list-heading"><h2 id="list-heading">Мои слова</h2><p id="empty-list">Новые слова появятся здесь.</p><ul id="word-list"></ul></section>
