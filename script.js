@@ -13,6 +13,9 @@ const categoryForm = document.getElementById('category-form');
 const categoryName = document.getElementById('category-name');
 const newCategory = document.getElementById('new-category');
 const activeCategory = document.getElementById('active-category');
+const reviewMode = document.getElementById('review-mode');
+reviewMode.value = 'all';
+let onlyUnknown = false;
 const defaultCategory = { id: 'uncategorized', name: 'Без категории', goal: null };
 let categories = [defaultCategory];
 let cards = [];
@@ -64,7 +67,15 @@ function save() {
 }
 
 function render() {
+  const visibleCards = onlyUnknown ? cards.filter(card => !card.known) : cards;
+  if (!visibleCards.some(card => card.id === activeId)) {
+    activeId = visibleCards[0]?.id ?? null;
+    flipped = false;
+  }
   const active = cards.find(card => card.id === activeId);
+  const reviewFinished = onlyUnknown && cards.length > 0 && visibleCards.length === 0;
+  document.getElementById('review-message').hidden = !reviewFinished;
+  flashcard.hidden = reviewFinished;
   const knownCount = cards.filter(card => card.known).length;
   const percent = cards.length ? Math.round(knownCount / cards.length * 100) : 0;
   document.getElementById('overall-count').textContent = `Знаю ${knownCount} из ${cards.length} · ${percent}%`;
@@ -157,7 +168,7 @@ function render() {
   document.getElementById('learned-count').textContent = `Выучено: ${knownCount}`;
   document.getElementById('empty-list').hidden = cards.length > 0;
   list.replaceChildren();
-  for (const card of cards) {
+  for (const card of visibleCards) {
     const item = document.createElement('li');
     const button = document.createElement('button');
     button.type = 'button';
@@ -224,6 +235,11 @@ activeCategory.addEventListener('change', () => {
   if (!active || !categories.some(category => category.id === activeCategory.value)) return;
   active.categoryId = activeCategory.value;
   save();
+  render();
+});
+reviewMode.addEventListener('change', () => {
+  onlyUnknown = reviewMode.value === 'unknown';
+  flipped = false;
   render();
 });
 flashcard.addEventListener('click', () => { flipped = !flipped; render(); });

@@ -23,11 +23,14 @@ button:disabled { cursor: default; opacity: .55; }
 .error { color: #a72d2d; font-size: 14px; margin: 6px 0 0; }
 .error:empty { display: none; }
 .practice { margin: 28px 0; }
+.review-filter { margin-bottom: 16px; }
+#review-message { padding: 12px; background: #edf3eb; border-radius: 10px; overflow-wrap: anywhere; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .section-heading h2, .section-heading p { margin: 0; }
 #learned-count { font-size: 14px; white-space: nowrap; }
 .flashcard { width: 100%; min-height: 230px; padding: 26px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 24px; background: #e5eddd; border-color: #c9d8be; text-align: center; }
 .flashcard:disabled { opacity: 1; }
+.flashcard[hidden] { display: none; }
 #card-side, #flip-hint { font-size: 13px; font-weight: 400; color: #506849; }
 #card-text { font-size: clamp(24px, 5vw, 34px); overflow-wrap: anywhere; max-width: 100%; }
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }

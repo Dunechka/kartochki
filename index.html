@@ -35,6 +35,8 @@
     </section>
     <section class="practice" aria-labelledby="practice-heading">
       <div class="section-heading"><h2 id="practice-heading">Проверить себя</h2><p id="learned-count" role="status">Выучено: 0</p></div>
+      <div class="review-filter"><label for="review-mode">Режим повторения</label><select id="review-mode"><option value="all">Все слова</option><option value="unknown">Только «Не знаю»</option></select></div>
+      <p id="review-message" role="status" hidden>Слов со статусом «Не знаю» не осталось</p>
       <button id="flashcard" class="flashcard" type="button" disabled aria-describedby="flip-hint"><span id="card-side">Пока нет карточек</span><span id="card-text">Добавьте первое слово</span><span id="flip-hint">Нажмите, чтобы перевернуть</span></button>
       <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
       <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
