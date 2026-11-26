@@ -23,6 +23,9 @@ button:disabled { cursor: default; opacity: .55; }
 .error { color: #a72d2d; font-size: 14px; margin: 6px 0 0; }
 .error:empty { display: none; }
 .practice { margin: 28px 0; }
+textarea { font: inherit; min-height: 88px; min-width: 44px; width: 100%; max-width: 100%; padding: 11px 13px; border: 1px solid #b6c7bc; border-radius: 10px; background: #fcfdfb; color: inherit; resize: vertical; }
+#hint-toggle { margin-top: 12px; }
+#card-hint { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: #fff; border-radius: 10px; }
 .review-filter { margin-bottom: 16px; }
 #review-message { padding: 12px; background: #edf3eb; border-radius: 10px; overflow-wrap: anywhere; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }

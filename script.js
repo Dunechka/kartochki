@@ -4,6 +4,9 @@ const storageKey = 'english-flashcards-v1';
 const form = document.getElementById('add-form');
 const wordInput = document.getElementById('word');
 const translationInput = document.getElementById('translation');
+const hintInput = document.getElementById('hint');
+const hintToggle = document.getElementById('hint-toggle');
+const cardHint = document.getElementById('card-hint');
 const flashcard = document.getElementById('flashcard');
 const knownButton = document.getElementById('known');
 const unknownButton = document.getElementById('unknown');
@@ -21,6 +24,7 @@ let categories = [defaultCategory];
 let cards = [];
 let activeId = null;
 let flipped = false;
+let hintOpen = false;
 
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -51,7 +55,8 @@ try {
     ids.add(card.id);
     return true;
   }).map(card => ({ id: card.id, word: card.word.trim(), translation: card.translation.trim(), known: card.known === true,
-    categoryId: categoryIds.has(card.categoryId) ? card.categoryId : defaultCategory.id }));
+    categoryId: categoryIds.has(card.categoryId) ? card.categoryId : defaultCategory.id,
+    hint: typeof card.hint === 'string' ? card.hint.trim() : '' }));
 } catch {
   storageMessage.textContent = 'Не удалось загрузить карточки. Проверьте доступ к хранилищу браузера.';
 }
@@ -71,8 +76,14 @@ function render() {
   if (!visibleCards.some(card => card.id === activeId)) {
     activeId = visibleCards[0]?.id ?? null;
     flipped = false;
+    hintOpen = false;
   }
   const active = cards.find(card => card.id === activeId);
+  if (!active?.hint) hintOpen = false;
+  hintToggle.disabled = !active?.hint;
+  hintToggle.setAttribute('aria-expanded', String(hintOpen));
+  cardHint.hidden = !hintOpen;
+  cardHint.textContent = active?.hint ?? '';
   const reviewFinished = onlyUnknown && cards.length > 0 && visibleCards.length === 0;
   document.getElementById('review-message').hidden = !reviewFinished;
   flashcard.hidden = reviewFinished;
@@ -185,6 +196,7 @@ function render() {
     button.addEventListener('click', () => {
       activeId = card.id;
       flipped = false;
+      hintOpen = false;
       render();
       flashcard.focus();
     });
@@ -206,10 +218,11 @@ form.addEventListener('submit', event => {
     if (invalid && !firstInvalid) firstInvalid = input;
   }
   if (firstInvalid) { firstInvalid.focus(); return; }
-  const card = { id: crypto.randomUUID(), word: wordInput.value.trim(), translation: translationInput.value.trim(), known: false, categoryId: newCategory.value };
+  const card = { id: crypto.randomUUID(), word: wordInput.value.trim(), translation: translationInput.value.trim(), known: false, categoryId: newCategory.value, hint: hintInput.value.trim() };
   cards.unshift(card);
   activeId = card.id;
   flipped = false;
+  hintOpen = false;
   save();
   form.reset();
   render();
@@ -240,9 +253,16 @@ activeCategory.addEventListener('change', () => {
 reviewMode.addEventListener('change', () => {
   onlyUnknown = reviewMode.value === 'unknown';
   flipped = false;
+  hintOpen = false;
   render();
 });
 flashcard.addEventListener('click', () => { flipped = !flipped; render(); });
+hintToggle.addEventListener('click', () => {
+  const active = cards.find(card => card.id === activeId);
+  if (!active?.hint) return;
+  hintOpen = !hintOpen;
+  render();
+});
 function mark(known) {
   const active = cards.find(card => card.id === activeId);
   if (!active) return;

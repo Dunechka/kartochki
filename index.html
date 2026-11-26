@@ -28,6 +28,7 @@
       <form id="add-form" novalidate>
         <div><label for="word">Слово или фраза</label><input id="word" name="word" lang="en" required aria-describedby="word-error"><p class="error" id="word-error" aria-live="polite"></p></div>
         <div><label for="translation">Перевод</label><input id="translation" name="translation" required aria-describedby="translation-error"><p class="error" id="translation-error" aria-live="polite"></p></div>
+        <div><label for="hint">Пример или подсказка (необязательно)</label><textarea id="hint" name="hint" rows="3"></textarea></div>
         <div><label for="new-category">Категория</label><select id="new-category"></select></div>
         <button class="primary" type="submit">Добавить</button>
       </form>
@@ -38,6 +39,8 @@
       <div class="review-filter"><label for="review-mode">Режим повторения</label><select id="review-mode"><option value="all">Все слова</option><option value="unknown">Только «Не знаю»</option></select></div>
       <p id="review-message" role="status" hidden>Слов со статусом «Не знаю» не осталось</p>
       <button id="flashcard" class="flashcard" type="button" disabled aria-describedby="flip-hint"><span id="card-side">Пока нет карточек</span><span id="card-text">Добавьте первое слово</span><span id="flip-hint">Нажмите, чтобы перевернуть</span></button>
+      <button id="hint-toggle" type="button" disabled aria-expanded="false" aria-controls="card-hint">Подсказка</button>
+      <p id="card-hint" hidden></p>
       <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
       <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
     </section>
