@@ -26,6 +26,16 @@ let activeId = null;
 let flipped = false;
 let hintOpen = false;
 
+function triggerFlipAnimation() {
+  flashcard.classList.remove('is-flipping');
+  void flashcard.offsetWidth;
+  flashcard.classList.add('is-flipping');
+}
+
+flashcard.addEventListener('animationend', () => {
+  flashcard.classList.remove('is-flipping');
+});
+
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
   const savedCards = Array.isArray(saved) ? saved : saved?.cards;
@@ -170,6 +180,7 @@ function render() {
     categoryList.append(item);
   }
   flashcard.disabled = knownButton.disabled = unknownButton.disabled = !active;
+  flashcard.classList.toggle('is-back', Boolean(active && flipped));
   document.getElementById('card-side').textContent = active ? (flipped ? 'Перевод' : 'Слово или фраза') : 'Пока нет карточек';
   document.getElementById('card-text').textContent = active ? (flipped ? active.translation : active.word) : 'Добавьте первое слово';
   document.getElementById('card-text').lang = active && !flipped ? 'en' : 'ru';
@@ -256,7 +267,11 @@ reviewMode.addEventListener('change', () => {
   hintOpen = false;
   render();
 });
-flashcard.addEventListener('click', () => { flipped = !flipped; render(); });
+flashcard.addEventListener('click', () => {
+  flipped = !flipped;
+  render();
+  triggerFlipAnimation();
+});
 hintToggle.addEventListener('click', () => {
   const active = cards.find(card => card.id === activeId);
   if (!active?.hint) return;
