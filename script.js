@@ -17,6 +17,13 @@ const categoryName = document.getElementById('category-name');
 const newCategory = document.getElementById('new-category');
 const activeCategory = document.getElementById('active-category');
 const reviewMode = document.getElementById('review-mode');
+const editPanel = document.getElementById('edit-panel');
+const editForm = document.getElementById('edit-form');
+const editWord = document.getElementById('edit-word');
+const editTranslation = document.getElementById('edit-translation');
+const editHint = document.getElementById('edit-hint');
+const editCategory = document.getElementById('edit-category');
+let editingId = null;
 reviewMode.value = 'all';
 let onlyUnknown = false;
 const defaultCategory = { id: 'uncategorized', name: 'Без категории', goal: null };
@@ -212,6 +219,16 @@ function render() {
       flashcard.focus();
     });
     item.append(button);
+    const actions = document.createElement('div');
+    actions.className = 'word-actions';
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.id = `edit-button-${card.id}`;
+    editButton.textContent = 'Изменить';
+    editButton.setAttribute('aria-label', `Изменить: ${card.word}`);
+    editButton.addEventListener('click', () => openEditor(card));
+    actions.append(editButton);
+    item.append(actions);
     list.append(item);
   }
 }
@@ -239,6 +256,63 @@ form.addEventListener('submit', event => {
   render();
   wordInput.focus();
 });
+function openEditor(card) {
+  editingId = card.id;
+  editWord.value = card.word;
+  editTranslation.value = card.translation;
+  editHint.value = card.hint;
+  editCategory.replaceChildren();
+  for (const category of categories) {
+    const option = document.createElement('option');
+    option.value = category.id;
+    option.textContent = category.name;
+    editCategory.append(option);
+  }
+  editCategory.value = card.categoryId;
+  for (const [input, errorId] of [[editWord, 'edit-word-error'], [editTranslation, 'edit-translation-error']]) {
+    input.setAttribute('aria-invalid', 'false');
+    document.getElementById(errorId).textContent = '';
+  }
+  editPanel.hidden = false;
+  editWord.focus();
+}
+
+function closeEditor() {
+  const button = document.getElementById(`edit-button-${editingId}`);
+  editingId = null;
+  editPanel.hidden = true;
+  editForm.reset();
+  if (button) button.focus();
+  else reviewMode.focus();
+}
+
+editForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const card = cards.find(card => card.id === editingId);
+  if (!card) { closeEditor(); return; }
+  let firstInvalid = null;
+  for (const [input, errorId, message] of [
+    [editWord, 'edit-word-error', 'Введите слово или фразу.'],
+    [editTranslation, 'edit-translation-error', 'Введите перевод.']
+  ]) {
+    const invalid = !input.value.trim();
+    input.setAttribute('aria-invalid', String(invalid));
+    document.getElementById(errorId).textContent = invalid ? message : '';
+    if (invalid && !firstInvalid) firstInvalid = input;
+  }
+  if (firstInvalid) { firstInvalid.focus(); return; }
+  if (!categories.some(category => category.id === editCategory.value)) return;
+  card.word = editWord.value.trim();
+  card.translation = editTranslation.value.trim();
+  card.hint = editHint.value.trim();
+  card.categoryId = editCategory.value;
+  flipped = false;
+  hintOpen = false;
+  save();
+  render();
+  closeEditor();
+});
+document.getElementById('edit-cancel').addEventListener('click', closeEditor);
 
 categoryForm.addEventListener('submit', event => {
   event.preventDefault();

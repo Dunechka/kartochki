@@ -412,6 +412,11 @@
     min-width: 0;
     font-weight: 600;
   }
+
+  .word-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 14px 12px; }
+  .edit-panel { margin-top: 20px; }
+  .edit-panel[hidden] { display: none; }
+  .edit-panel > .goal-hint { margin-bottom: 16px; }
   
   .word-status {
     font-size: 12px;

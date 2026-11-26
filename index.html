@@ -45,6 +45,17 @@
       <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
     </section>
     <section class="panel" aria-labelledby="list-heading"><h2 id="list-heading">Мои слова</h2><p id="empty-list">Новые слова появятся здесь.</p><ul id="word-list"></ul></section>
+    <section id="edit-panel" class="panel edit-panel" aria-labelledby="edit-heading" hidden>
+      <h2 id="edit-heading">Изменить карточку</h2>
+      <p class="goal-hint">При выборе другой карточки для изменения несохранённый ввод будет потерян.</p>
+      <form id="edit-form" novalidate>
+        <div><label for="edit-word">Слово или фраза</label><input id="edit-word" lang="en" required aria-describedby="edit-word-error"><p id="edit-word-error" class="error" aria-live="polite"></p></div>
+        <div><label for="edit-translation">Перевод</label><input id="edit-translation" required aria-describedby="edit-translation-error"><p id="edit-translation-error" class="error" aria-live="polite"></p></div>
+        <div><label for="edit-hint">Пример или подсказка (необязательно)</label><textarea id="edit-hint" rows="3"></textarea></div>
+        <div><label for="edit-category">Категория</label><select id="edit-category"></select></div>
+        <div class="actions"><button class="primary" type="submit">Сохранить</button><button id="edit-cancel" type="button">Отмена</button></div>
+      </form>
+    </section>
     <footer>Карточки сохраняются в этом браузере.</footer>
   </main>
 </body>
