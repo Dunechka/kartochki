@@ -228,6 +228,20 @@ function render() {
     editButton.setAttribute('aria-label', `Изменить: ${card.word}`);
     editButton.addEventListener('click', () => openEditor(card));
     actions.append(editButton);
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.textContent = 'Удалить';
+    deleteButton.setAttribute('aria-label', `Удалить: ${card.word}`);
+    deleteButton.addEventListener('click', () => {
+      if (!confirm(`Удалить карточку «${card.word}»?`)) return;
+      cards = cards.filter(item => item.id !== card.id);
+      if (editingId === card.id) closeEditor();
+      save();
+      render();
+      if (activeId) flashcard.focus();
+      else reviewMode.focus();
+    });
+    actions.append(deleteButton);
     item.append(actions);
     list.append(item);
   }
