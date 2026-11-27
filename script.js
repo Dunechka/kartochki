@@ -27,6 +27,7 @@ let editingId = null;
 reviewMode.value = 'all';
 let onlyUnknown = false;
 const defaultCategory = { id: 'uncategorized', name: 'Без категории', goal: null };
+const baseCategoryNames = ['Повседневное общение', 'Путешествия', 'Работа', 'Учёба', 'Еда', 'Дом', 'Здоровье', 'Хобби'];
 let categories = [defaultCategory];
 let cards = [];
 let activeId = null;
@@ -108,6 +109,12 @@ try {
     hint: typeof card.hint === 'string' ? card.hint.trim() : '' }));
 } catch {
   storageMessage.textContent = 'Не удалось загрузить карточки. Проверьте доступ к хранилищу браузера.';
+}
+for (const [index, name] of baseCategoryNames.entries()) {
+  if (categories.some(category => category.name.trim().toLocaleLowerCase('ru') === name.toLocaleLowerCase('ru'))) continue;
+  let id = 'base-' + index;
+  while (categories.some(category => category.id === id)) id += '-base';
+  categories.push({ id, name, goal: null });
 }
 activeId = cards[0]?.id ?? null;
 

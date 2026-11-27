@@ -66,10 +66,13 @@
     <div id="view-categories" class="app-view" hidden>
     <section class="panel categories" aria-labelledby="categories-heading">
       <h2 id="categories-heading">Категории</h2>
+      <p class="goal-hint">Базовые темы уже доступны в списках выбора категории. Можно создать свою.</p>
+      <h3>Своя категория</h3>
       <form id="category-form" novalidate>
         <div><label for="category-name">Название категории</label><input id="category-name" required aria-describedby="category-error"><p id="category-error" class="error" aria-live="polite"></p></div>
         <button type="submit">Создать категорию</button>
       </form>
+      <h3>Мои категории</h3>
       <ul id="category-list" aria-label="Мои категории"></ul>
     </section>
     </div>
