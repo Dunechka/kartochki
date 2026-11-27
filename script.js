@@ -37,6 +37,111 @@ let hintOpen = false;
 const viewButtons = document.querySelectorAll('[data-view]');
 const addPanel = document.getElementById('add-panel');
 const addToggle = document.getElementById('add-toggle');
+const practiceMode = document.getElementById('practice-mode');
+let quiz = null;
+practiceMode.value = 'cards';
+
+function setPracticeMode(mode) {
+  practiceMode.value = mode;
+  document.getElementById('cards-practice').hidden = mode !== 'cards';
+  document.getElementById('quiz-practice').hidden = mode !== 'quiz';
+  renderQuiz();
+}
+
+function shuffled(items) {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+function translationKey(text) {
+  return text.trim().toLocaleLowerCase('ru');
+}
+
+function quizTranslations() {
+  return [...new Map(cards.map(card => [translationKey(card.translation), card.translation])).values()];
+}
+
+function renderQuiz() {
+  const enough = quizTranslations().length >= 4;
+  document.getElementById('quiz-start').disabled = !enough;
+  document.getElementById('quiz-shortage').hidden = enough;
+  document.getElementById('quiz-add').hidden = enough;
+  document.getElementById('quiz-launch').hidden = Boolean(quiz);
+  document.getElementById('quiz-question').hidden = !quiz || quiz.finished;
+  document.getElementById('quiz-result').hidden = !quiz?.finished;
+  if (!quiz) return;
+  if (quiz.finished) {
+    document.getElementById('quiz-score').textContent = `Верно: ${quiz.score} из ${quiz.questions.length}`;
+    const errors = quiz.questions.length - quiz.score;
+    document.getElementById('quiz-errors').textContent = errors ? `Ошибок: ${errors}` : 'Без ошибок';
+    return;
+  }
+  const question = quiz.questions[quiz.index];
+  document.getElementById('quiz-progress').textContent = `Вопрос ${quiz.index + 1} из ${quiz.questions.length}`;
+  document.getElementById('quiz-word').textContent = question.word;
+  const options = document.getElementById('quiz-options');
+  options.replaceChildren();
+  question.options.forEach((text, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    const correct = translationKey(text) === translationKey(question.translation);
+    const answered = question.answer !== null;
+    button.textContent = text;
+    button.disabled = answered;
+    if (answered && correct) {
+      button.className = 'quiz-correct';
+      button.textContent += ' — Верно';
+    } else if (answered && question.answer === index) {
+      button.className = 'quiz-wrong';
+      button.textContent += ' — Неверно';
+    }
+    button.addEventListener('click', () => {
+      if (question.answer !== null) return;
+      question.answer = index;
+      if (correct) quiz.score++;
+      renderQuiz();
+      document.getElementById('quiz-next').focus();
+    });
+    options.append(button);
+  });
+  const selected = question.options[question.answer];
+  document.getElementById('quiz-feedback').textContent = question.answer === null ? '' :
+    translationKey(selected) === translationKey(question.translation) ? 'Верно' : `Неверно. Правильный ответ: ${question.translation}`;
+  const next = document.getElementById('quiz-next');
+  next.hidden = question.answer === null;
+  next.textContent = quiz.index === quiz.questions.length - 1 ? 'Итог' : 'Далее';
+}
+
+practiceMode.addEventListener('change', () => setPracticeMode(practiceMode.value));
+document.getElementById('quiz-start').addEventListener('click', () => {
+  const translations = quizTranslations();
+  if (translations.length < 4) return;
+  quiz = {
+    questions: shuffled(cards).map(card => ({
+      word: card.word, translation: card.translation, answer: null,
+      options: shuffled([card.translation, ...shuffled(translations.filter(text =>
+        translationKey(text) !== translationKey(card.translation))).slice(0, 3)])
+    })),
+    index: 0, score: 0, finished: false
+  };
+  renderQuiz();
+  document.getElementById('quiz-word').focus();
+});
+document.getElementById('quiz-next').addEventListener('click', () => {
+  if (!quiz || quiz.finished || quiz.questions[quiz.index].answer === null) return;
+  if (quiz.index === quiz.questions.length - 1) quiz.finished = true;
+  else quiz.index++;
+  renderQuiz();
+  document.getElementById(quiz.finished ? 'quiz-result' : 'quiz-word').focus();
+});
+document.getElementById('quiz-add').addEventListener('click', () => {
+  showView('words');
+  showAdd(true);
+});
 
 function showView(name) {
   for (const view of document.querySelectorAll('.app-view')) {
@@ -128,6 +233,7 @@ function save() {
 }
 
 function render() {
+  renderQuiz();
   const visibleCards = onlyUnknown ? cards.filter(card => !card.known) : cards;
   if (!visibleCards.some(card => card.id === activeId)) {
     activeId = visibleCards[0]?.id ?? null;
@@ -257,6 +363,7 @@ function render() {
       hintOpen = false;
       render();
       showView('learn');
+      setPracticeMode('cards');
       flashcard.focus();
     });
     item.append(button);
@@ -313,6 +420,7 @@ form.addEventListener('submit', event => {
   addPanel.hidden = true;
   addToggle.setAttribute('aria-expanded', 'false');
   showView('learn');
+  setPracticeMode('cards');
   flashcard.focus();
 });
 function openEditor(card) {

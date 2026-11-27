@@ -575,6 +575,17 @@
   }
 
 /* Разделы приложения */
+.practice-mode { margin-bottom: 12px; }
+.quiz-options { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.quiz-options button { min-height: 44px; min-width: 0; overflow-wrap: anywhere; text-align: left; }
+.quiz-options button:disabled { opacity: 1; }
+.quiz-options .quiz-correct { border-color: #68d8af; background: #193b30; color: #9ce8cc; }
+.quiz-options .quiz-wrong { border-color: #ff8a93; background: #45252d; color: #ffa3aa; }
+#quiz-word { font-size: 26px; overflow-wrap: anywhere; }
+#quiz-feedback, #quiz-score, #quiz-errors { overflow-wrap: anywhere; }
+@media (min-width: 600px) {
+  .quiz-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 [hidden] { display: none !important; }
 main { width: min(100% - 32px, 1080px); margin: 20px auto; }
 .app-header { margin: 0 0 12px; padding: 0; border: 0; }

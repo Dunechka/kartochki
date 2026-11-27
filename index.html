@@ -22,7 +22,8 @@
       <p id="overall-count" role="status">Знаю 0 из 0 · 0%</p>
       <progress id="overall-progress" max="100" value="0" aria-labelledby="progress-heading overall-count"></progress>
     </section>
-    <section class="practice" aria-labelledby="practice-heading">
+    <div class="practice-mode"><label for="practice-mode">Способ обучения</label><select id="practice-mode"><option value="cards">Карточки</option><option value="quiz">Квиз</option></select></div>
+    <section id="cards-practice" class="practice" aria-labelledby="practice-heading">
       <div class="section-heading"><h2 id="practice-heading">Проверить себя</h2><p id="learned-count" role="status">Выучено: 0</p></div>
       <div class="review-filter"><label for="review-mode">Режим повторения</label><select id="review-mode"><option value="all">Все слова</option><option value="unknown">Только «Не знаю»</option></select></div>
       <p id="review-message" role="status" hidden>Слов со статусом «Не знаю» не осталось</p>
@@ -32,6 +33,25 @@
       <button id="hint-toggle" type="button" disabled aria-expanded="false" aria-controls="card-hint">Подсказка</button>
       <p id="card-hint" hidden></p>
       <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
+    </section>
+    <section id="quiz-practice" class="practice" aria-labelledby="quiz-heading" hidden>
+      <h2 id="quiz-heading">Квиз по своим словам</h2>
+      <div id="quiz-launch">
+        <p id="quiz-shortage" role="status">Для квиза нужны 4 разных перевода</p>
+        <button id="quiz-start" class="primary" type="button" disabled>Начать</button>
+        <button id="quiz-add" type="button">Добавить слово</button>
+      </div>
+      <div id="quiz-question" hidden>
+        <p id="quiz-progress" role="status"></p>
+        <h3 id="quiz-word" lang="en" tabindex="-1"></h3>
+        <div id="quiz-options" class="quiz-options" role="group" aria-labelledby="quiz-word"></div>
+        <p id="quiz-feedback" role="status"></p>
+        <button id="quiz-next" class="primary" type="button" hidden>Далее</button>
+      </div>
+      <div id="quiz-result" tabindex="-1" hidden>
+        <p id="quiz-score"></p>
+        <p id="quiz-errors"></p>
+      </div>
     </section>
     </div>
     <div id="view-words" class="app-view" hidden>
