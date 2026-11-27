@@ -573,3 +573,41 @@
       font-size: 17px;
     }
   }
+
+/* Разделы приложения */
+[hidden] { display: none !important; }
+main { width: min(100% - 32px, 1080px); margin: 20px auto; }
+.app-header { margin: 0 0 12px; padding: 0; border: 0; }
+.app-header h1 { font-size: 22px; margin: 0; line-height: 1.3; }
+.app-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+.app-nav button { padding: 10px 8px; }
+.app-nav [aria-current="page"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+#storage-message:not(:empty) { margin-bottom: 16px; }
+#view-learn { max-width: 680px; margin-inline: auto; }
+.overall-progress { padding: 12px 16px; margin-bottom: 12px; box-shadow: none; }
+.overall-progress h2 { font-size: 13px; margin-bottom: 4px; color: var(--muted); }
+#overall-count { font-size: 14px; margin-bottom: 8px; }
+#overall-progress { height: 6px; }
+.practice { margin: 0; padding: 18px; }
+.practice .section-heading { margin-bottom: 12px; }
+.review-filter { margin-bottom: 12px; }
+.flashcard { min-height: 190px; padding: 20px; gap: 16px; }
+.words-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+.words-layout > *, .word-forms { min-width: 0; }
+.word-forms:has(> :not([hidden])) { display: grid; gap: 20px; }
+.word-forms:not(:has(> :not([hidden]))) { display: none; }
+.edit-panel { margin-top: 0; }
+#add-close { margin-bottom: 16px; }
+#practice-add { margin-top: 14px; }
+#view-categories { max-width: 720px; margin-inline: auto; }
+@media (min-width: 850px) {
+  .words-layout:has(.word-forms > :not([hidden])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 420px) {
+  main { margin-top: 16px; }
+  .app-header h1 { font-size: 20px; }
+  .app-nav { margin-bottom: 12px; gap: 6px; }
+  .practice { padding: 14px; }
+  .overall-progress { padding: 10px 14px; }
+  .flashcard { min-height: 170px; padding: 16px; }
+}

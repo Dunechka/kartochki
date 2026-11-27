@@ -33,6 +33,38 @@ let activeId = null;
 let flipped = false;
 let hintOpen = false;
 
+const viewButtons = document.querySelectorAll('[data-view]');
+const addPanel = document.getElementById('add-panel');
+const addToggle = document.getElementById('add-toggle');
+
+function showView(name) {
+  for (const view of document.querySelectorAll('.app-view')) {
+    view.hidden = view.id !== `view-${name}`;
+  }
+  for (const button of viewButtons) {
+    if (button.dataset.view === name) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  }
+  window.scrollTo(0, 0);
+}
+
+function showAdd(open) {
+  addPanel.hidden = !open;
+  addToggle.setAttribute('aria-expanded', String(open));
+  if (open) wordInput.focus();
+  else addToggle.focus();
+}
+
+for (const button of viewButtons) {
+  button.addEventListener('click', () => showView(button.dataset.view));
+}
+addToggle.addEventListener('click', () => showAdd(addPanel.hidden));
+document.getElementById('add-close').addEventListener('click', () => showAdd(false));
+document.getElementById('practice-add').addEventListener('click', () => {
+  showView('words');
+  showAdd(true);
+});
+
 function triggerFlipAnimation() {
   flashcard.classList.remove('is-flipping');
   void flashcard.offsetWidth;
@@ -102,6 +134,7 @@ function render() {
   cardHint.hidden = !hintOpen;
   cardHint.textContent = active?.hint ?? '';
   const reviewFinished = onlyUnknown && cards.length > 0 && visibleCards.length === 0;
+  document.getElementById('practice-add').hidden = cards.length > 0 && !reviewFinished;
   document.getElementById('review-message').hidden = !reviewFinished;
   flashcard.hidden = reviewFinished;
   const knownCount = cards.filter(card => card.known).length;
@@ -216,6 +249,7 @@ function render() {
       flipped = false;
       hintOpen = false;
       render();
+      showView('learn');
       flashcard.focus();
     });
     item.append(button);
@@ -238,8 +272,9 @@ function render() {
       if (editingId === card.id) closeEditor();
       save();
       render();
-      if (activeId) flashcard.focus();
-      else reviewMode.focus();
+      const nextWord = list.querySelector('.word-item');
+      if (nextWord) nextWord.focus();
+      else addToggle.focus();
     });
     actions.append(deleteButton);
     item.append(actions);
@@ -268,7 +303,10 @@ form.addEventListener('submit', event => {
   save();
   form.reset();
   render();
-  wordInput.focus();
+  addPanel.hidden = true;
+  addToggle.setAttribute('aria-expanded', 'false');
+  showView('learn');
+  flashcard.focus();
 });
 function openEditor(card) {
   editingId = card.id;
@@ -297,7 +335,7 @@ function closeEditor() {
   editPanel.hidden = true;
   editForm.reset();
   if (button) button.focus();
-  else reviewMode.focus();
+  else addToggle.focus();
 }
 
 editForm.addEventListener('submit', event => {

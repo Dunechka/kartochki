@@ -9,22 +9,37 @@
 </head>
 <body>
   <main>
-    <header><p class="eyebrow">ПОНЕМНОГУ КАЖДЫЙ ДЕНЬ</p><h1>Английский в карточках</h1><p>Добавляйте слова и проверяйте, что запомнили.</p></header>
+    <header class="app-header"><h1>Английский в карточках</h1></header>
+    <nav class="app-nav" aria-label="Разделы">
+      <button type="button" data-view="learn" aria-controls="view-learn" aria-current="page">Учить</button>
+      <button type="button" data-view="words" aria-controls="view-words">Слова</button>
+      <button type="button" data-view="categories" aria-controls="view-categories">Категории</button>
+    </nav>
+    <p id="storage-message" class="error" role="status"></p>
+    <div id="view-learn" class="app-view">
     <section class="panel overall-progress" aria-labelledby="progress-heading">
       <h2 id="progress-heading">Общий прогресс</h2>
       <p id="overall-count" role="status">Знаю 0 из 0 · 0%</p>
       <progress id="overall-progress" max="100" value="0" aria-labelledby="progress-heading overall-count"></progress>
     </section>
-    <section class="panel categories" aria-labelledby="categories-heading">
-      <h2 id="categories-heading">Категории</h2>
-      <form id="category-form" novalidate>
-        <div><label for="category-name">Название категории</label><input id="category-name" required aria-describedby="category-error"><p id="category-error" class="error" aria-live="polite"></p></div>
-        <button type="submit">Создать категорию</button>
-      </form>
-      <ul id="category-list" aria-label="Мои категории"></ul>
+    <section class="practice" aria-labelledby="practice-heading">
+      <div class="section-heading"><h2 id="practice-heading">Проверить себя</h2><p id="learned-count" role="status">Выучено: 0</p></div>
+      <div class="review-filter"><label for="review-mode">Режим повторения</label><select id="review-mode"><option value="all">Все слова</option><option value="unknown">Только «Не знаю»</option></select></div>
+      <p id="review-message" role="status" hidden>Слов со статусом «Не знаю» не осталось</p>
+      <button id="flashcard" class="flashcard" type="button" disabled aria-describedby="flip-hint"><span id="card-side">Пока нет карточек</span><span id="card-text">Добавьте первое слово</span><span id="flip-hint">Нажмите, чтобы перевернуть</span></button>
+      <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
+      <button id="practice-add" class="primary" type="button">Добавить слово</button>
+      <button id="hint-toggle" type="button" disabled aria-expanded="false" aria-controls="card-hint">Подсказка</button>
+      <p id="card-hint" hidden></p>
+      <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
     </section>
-    <section class="panel" aria-labelledby="add-heading">
+    </div>
+    <div id="view-words" class="app-view" hidden>
+      <div class="section-heading"><h2>Слова</h2><button id="add-toggle" class="primary" type="button" aria-expanded="false" aria-controls="add-panel">Добавить слово</button></div>
+      <div class="words-layout"><div class="word-forms">
+    <section id="add-panel" class="panel" hidden aria-labelledby="add-heading">
       <h2 id="add-heading">Новая карточка</h2>
+      <button id="add-close" type="button">Скрыть форму</button>
       <form id="add-form" novalidate>
         <div><label for="word">Слово или фраза</label><input id="word" name="word" lang="en" required aria-describedby="word-error"><p class="error" id="word-error" aria-live="polite"></p></div>
         <div><label for="translation">Перевод</label><input id="translation" name="translation" required aria-describedby="translation-error"><p class="error" id="translation-error" aria-live="polite"></p></div>
@@ -32,19 +47,7 @@
         <div><label for="new-category">Категория</label><select id="new-category"></select></div>
         <button class="primary" type="submit">Добавить</button>
       </form>
-      <p id="storage-message" class="error" role="status"></p>
     </section>
-    <section class="practice" aria-labelledby="practice-heading">
-      <div class="section-heading"><h2 id="practice-heading">Проверить себя</h2><p id="learned-count" role="status">Выучено: 0</p></div>
-      <div class="review-filter"><label for="review-mode">Режим повторения</label><select id="review-mode"><option value="all">Все слова</option><option value="unknown">Только «Не знаю»</option></select></div>
-      <p id="review-message" role="status" hidden>Слов со статусом «Не знаю» не осталось</p>
-      <button id="flashcard" class="flashcard" type="button" disabled aria-describedby="flip-hint"><span id="card-side">Пока нет карточек</span><span id="card-text">Добавьте первое слово</span><span id="flip-hint">Нажмите, чтобы перевернуть</span></button>
-      <button id="hint-toggle" type="button" disabled aria-expanded="false" aria-controls="card-hint">Подсказка</button>
-      <p id="card-hint" hidden></p>
-      <div class="card-category"><label for="active-category">Категория карточки</label><select id="active-category" disabled></select></div>
-      <div class="actions"><button id="known" class="primary" type="button" disabled>Знаю</button><button id="unknown" type="button" disabled>Не знаю</button></div>
-    </section>
-    <section class="panel" aria-labelledby="list-heading"><h2 id="list-heading">Мои слова</h2><p id="empty-list">Новые слова появятся здесь.</p><ul id="word-list"></ul></section>
     <section id="edit-panel" class="panel edit-panel" aria-labelledby="edit-heading" hidden>
       <h2 id="edit-heading">Изменить карточку</h2>
       <p class="goal-hint">При выборе другой карточки для изменения несохранённый ввод будет потерян.</p>
@@ -56,6 +59,20 @@
         <div class="actions"><button class="primary" type="submit">Сохранить</button><button id="edit-cancel" type="button">Отмена</button></div>
       </form>
     </section>
+    </div>
+    <section class="panel" aria-labelledby="list-heading"><h2 id="list-heading">Мои слова</h2><p id="empty-list">Новые слова появятся здесь.</p><ul id="word-list"></ul></section>
+    </div>
+    </div>
+    <div id="view-categories" class="app-view" hidden>
+    <section class="panel categories" aria-labelledby="categories-heading">
+      <h2 id="categories-heading">Категории</h2>
+      <form id="category-form" novalidate>
+        <div><label for="category-name">Название категории</label><input id="category-name" required aria-describedby="category-error"><p id="category-error" class="error" aria-live="polite"></p></div>
+        <button type="submit">Создать категорию</button>
+      </form>
+      <ul id="category-list" aria-label="Мои категории"></ul>
+    </section>
+    </div>
     <footer>Карточки сохраняются в этом браузере.</footer>
   </main>
 </body>
