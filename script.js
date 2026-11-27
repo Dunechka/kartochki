@@ -65,6 +65,15 @@ function quizTranslations() {
   return [...new Map(cards.map(card => [translationKey(card.translation), card.translation])).values()];
 }
 
+function quizDictionary() {
+  return JSON.stringify(cards.map(({ id, word, translation, hint }) => [id, word, translation, hint]));
+}
+
+function quizMistakes() {
+  return quiz.questions.filter(question => question.answer !== null &&
+    translationKey(question.options[question.answer]) !== translationKey(question.translation));
+}
+
 function renderQuiz() {
   const enough = quizTranslations().length >= 4;
   document.getElementById('quiz-start').disabled = !enough;
@@ -78,6 +87,7 @@ function renderQuiz() {
     document.getElementById('quiz-score').textContent = `Верно: ${quiz.score} из ${quiz.questions.length}`;
     const errors = quiz.questions.length - quiz.score;
     document.getElementById('quiz-errors').textContent = errors ? `Ошибок: ${errors}` : 'Без ошибок';
+    document.getElementById('quiz-repeat').hidden = errors === 0;
     return;
   }
   const question = quiz.questions[quiz.index];
@@ -117,12 +127,14 @@ function renderQuiz() {
 }
 
 practiceMode.addEventListener('change', () => setPracticeMode(practiceMode.value));
-document.getElementById('quiz-start').addEventListener('click', () => {
+function startQuiz(roundCards = cards) {
   const translations = quizTranslations();
-  if (translations.length < 4) return;
+  if (translations.length < 4 || !roundCards.length) return;
+  document.getElementById('quiz-reset-message').textContent = '';
   quiz = {
-    questions: shuffled(cards).map(card => ({
-      word: card.word, translation: card.translation, answer: null,
+    dictionary: quizDictionary(),
+    questions: shuffled(roundCards).map(card => ({
+      id: card.id, word: card.word, translation: card.translation, answer: null,
       options: shuffled([card.translation, ...shuffled(translations.filter(text =>
         translationKey(text) !== translationKey(card.translation))).slice(0, 3)])
     })),
@@ -130,6 +142,13 @@ document.getElementById('quiz-start').addEventListener('click', () => {
   };
   renderQuiz();
   document.getElementById('quiz-word').focus();
+}
+document.getElementById('quiz-start').addEventListener('click', () => startQuiz());
+document.getElementById('quiz-new').addEventListener('click', () => startQuiz());
+document.getElementById('quiz-repeat').addEventListener('click', () => {
+  if (!quiz?.finished) return;
+  const ids = new Set(quizMistakes().map(question => question.id));
+  startQuiz(cards.filter(card => ids.has(card.id)));
 });
 document.getElementById('quiz-next').addEventListener('click', () => {
   if (!quiz || quiz.finished || quiz.questions[quiz.index].answer === null) return;
@@ -224,6 +243,10 @@ for (const [index, name] of baseCategoryNames.entries()) {
 activeId = cards[0]?.id ?? null;
 
 function save() {
+  if (quiz && quiz.dictionary !== quizDictionary()) {
+    quiz = null;
+    document.getElementById('quiz-reset-message').textContent = 'Словарь изменился. Начните новый раунд';
+  }
   try {
     localStorage.setItem(storageKey, JSON.stringify({ cards, categories }));
     storageMessage.textContent = '';

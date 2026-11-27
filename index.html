@@ -36,6 +36,7 @@
     </section>
     <section id="quiz-practice" class="practice" aria-labelledby="quiz-heading" hidden>
       <h2 id="quiz-heading">Квиз по своим словам</h2>
+      <p id="quiz-reset-message" role="status"></p>
       <div id="quiz-launch">
         <p id="quiz-shortage" role="status">Для квиза нужны 4 разных перевода</p>
         <button id="quiz-start" class="primary" type="button" disabled>Начать</button>
@@ -51,6 +52,8 @@
       <div id="quiz-result" tabindex="-1" hidden>
         <p id="quiz-score"></p>
         <p id="quiz-errors"></p>
+        <button id="quiz-repeat" class="primary" type="button" hidden>Повторить ошибки</button>
+        <button id="quiz-new" type="button">Новый раунд</button>
       </div>
     </section>
     </div>
